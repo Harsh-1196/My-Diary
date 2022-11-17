@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>595015425637-k2pitp4edvug70vc60rtv5ksrc4b09gq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.595015425637-k2pitp4edvug70vc60rtv5ksrc4b09gq</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBiibMc-eaX7Vyw2ny9EQ8u8Dp5ChbKuPI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>595015425637</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.diaryone.mydiary</string>
+	<key>PROJECT_ID</key>
+	<string>mynotes-app-new-624</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mynotes-app-new-624.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:595015425637:ios:24761bc0460adb5cf4b08c</string>
+</dict>
+</plist>

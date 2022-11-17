@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "595015425637",
+    "project_id": "mynotes-app-new-624",
+    "storage_bucket": "mynotes-app-new-624.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595015425637:android:5b9a45e66b3313eef4b08c",
+        "android_client_info": {
+          "package_name": "com.diaryone.mydiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "595015425637-f3h2mat6gr7qg61ethtlj7fk015tgmgs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCztMYOg9ByeI_KMlxQD7YPHeN4ocTx5v0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "595015425637-f3h2mat6gr7qg61ethtlj7fk015tgmgs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "595015425637-k2pitp4edvug70vc60rtv5ksrc4b09gq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.diaryone.mydiary"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
