@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _LoginViewState extends State<LoginView> {
                 const InputDecoration(hintText: 'Enter Your Email Here'),
           ),
           TextField(
-            obscureText: true,
+            obscureText: true, // it hides our input text
             autocorrect: false,
             enableSuggestions: false,
             decoration:
@@ -57,12 +58,12 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                print(userCredential);
+                devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  print('user not found');
+                  devtools.log('user not found');
                 } else if (e.code == 'wrong-password') {
-                  print('wrong password');
+                  devtools.log('wrong password');
                 }
               }
             },
@@ -70,6 +71,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextButton(
               onPressed: () {
+                // Navigar helps in going to a particular screen using named routes we defined inside main file
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/register/', (route) => false);
               },
