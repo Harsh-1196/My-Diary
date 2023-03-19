@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mydiary/constants/routes.dart';
 import 'package:mydiary/views/Verify_email_view.dart';
 import 'package:mydiary/views/login_view.dart';
 import 'firebase_options.dart';
@@ -23,13 +24,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       home: const HomePage(),
-      initialRoute: '/',
       routes: {
         // routes are basically screens and pages
         // here we are basically assigning a name to each screen so that we can navigate to each screen using navigator
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
-        '/notes/': (context) => const NotesView()
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute: (context) => const NotesView()
       },
     );
   }
@@ -97,7 +97,7 @@ class _NotesViewState extends State<NotesView> {
                 if (showLogout) {
                   await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login/',
+                    loginRoute,
                     (_) => false,
                   );
                 }
