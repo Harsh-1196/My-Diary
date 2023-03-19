@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         // here we are basically assigning a name to each screen so that we can navigate to each screen using navigator
         '/login/': (context) => const LoginView(),
         '/register/': (context) => const RegisterView(),
-        '/notes': (context) => const NotesView()
+        '/notes/': (context) => const NotesView()
       },
     );
   }

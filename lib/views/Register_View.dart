@@ -55,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
                   .text; //we take the email and password text from controller
               final password = _password.text;
               try {
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
