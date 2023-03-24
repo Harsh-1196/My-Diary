@@ -6,7 +6,6 @@ import 'package:mydiary/views/Verify_email_view.dart';
 import 'package:mydiary/views/login_view.dart';
 import 'firebase_options.dart';
 import 'views/Register_View.dart';
-import 'dart:developer' as devtools show log;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +28,8 @@ class MyApp extends StatelessWidget {
         // here we are basically assigning a name to each screen so that we can navigate to each screen using navigator
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
-        notesRoute: (context) => const NotesView()
+        notesRoute: (context) => const NotesView(),
+        verifyEmailRoute: (context) => const VerifyEmailView()
       },
     );
   }
