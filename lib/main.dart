@@ -96,6 +96,7 @@ class _NotesViewState extends State<NotesView> {
                 final showLogout = await showLogoutDialog(context);
                 if (showLogout) {
                   await FirebaseAuth.instance.signOut();
+                  if (!mounted) return;
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     loginRoute,
                     (_) => false,
