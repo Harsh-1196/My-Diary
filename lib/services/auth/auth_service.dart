@@ -1,10 +1,9 @@
 import 'package:mydiary/services/auth/auth_user.dart';
 import 'package:mydiary/services/auth/firebase_auth_provider.dart';
-
 import 'Auth_provider.dart';
 
-class AuthService implements AuthProvider {
-  final AuthProvider provider;
+class AuthService implements authProvider {
+  final authProvider provider;
   const AuthService(this.provider);
 
   factory AuthService.firebase() => AuthService(FirebaseAuthProvider());

@@ -1,6 +1,6 @@
 import 'package:mydiary/services/auth/auth_user.dart';
 
-abstract class AuthProvider {
+abstract class authProvider {
   Future<void> initialize();
   AuthUser? get currentUser;
   Future<AuthUser> logIn({

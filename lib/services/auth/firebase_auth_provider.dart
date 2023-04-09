@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart'
 
 import 'Auth_provider.dart';
 
-class FirebaseAuthProvider implements AuthProvider {
+class FirebaseAuthProvider implements authProvider {
   @override
   Future<void> initialize() async {
     await Firebase.initializeApp(
