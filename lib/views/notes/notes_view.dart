@@ -65,7 +65,6 @@ class _NotesViewState extends State<NotesView> {
             itemBuilder: (context) {
               return [
                 // remember -> value is what programmer see in terminal and child is what the user see
-
                 const PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Log Out'),
@@ -85,6 +84,7 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
+                    case ConnectionState.active:
                       return const Text('waiting to get all notes...');
                     default:
                       return const CircularProgressIndicator();
