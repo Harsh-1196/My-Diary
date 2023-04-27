@@ -25,11 +25,13 @@ class _NewNotesViewState extends State<NewNotesView> {
     super.initState();
   }
 
+// updating our previous notes if we want to
   void _textControllerListener() async {
     final note = _note;
     if (note == null) {
       return;
     }
+
     final text = _textController.text;
     await _notesService.updateNote(
       note: note,
@@ -41,7 +43,7 @@ class _NewNotesViewState extends State<NewNotesView> {
     _textController.removeListener(_textControllerListener);
     _textController.addListener(_textControllerListener);
   }
-
+ 
   Future<DatabaseNote> createNewNote() async {
     final existingNote = _note;
     if (existingNote != null) {

@@ -1,4 +1,5 @@
-// lec 29 -> 16:09
+// lec 32 -> 12:49
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mydiary/services/auth/auth_service.dart';
 import 'package:mydiary/services/crud/notes_service.dart';
@@ -24,12 +25,6 @@ class _NotesViewState extends State<NotesView> {
   }
 
   @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +32,7 @@ class _NotesViewState extends State<NotesView> {
         actions: [
           IconButton(
             onPressed: () {
+              // here we used pushNamed and not pudhNamedAndRemoveUntill as we need to display this new note on top of our home screen and not by removing it
               Navigator.of(context).pushNamed(newNoteRoute);
             },
             icon: const Icon(Icons.add),
@@ -85,7 +81,25 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Text('waiting to get all notes...');
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }

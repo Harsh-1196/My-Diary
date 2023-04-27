@@ -1,30 +1,36 @@
-// 9:15 lecture 28
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:mydiary/services/auth/auth_exception.dart';
+import 'package:mydiary/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
-import 'crud_exceptions.dart';
 
 class NotesService {
   Database? _db;
 
   List<DatabaseNote> _notes = [];
 
-  // here we are just creating a private constructor for our notes service its called a singleton
+  DatabaseUser? _user;
+
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   factory NotesService() => _shared;
 
-// A strwam helps us in getting the list of databases such as our notes from the database towards our hoem screen
-// broadcasting a stream is basically listening to an element of stream which is a database in a list of databases
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
-  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+  Future<DatabaseUser> getOrCreateUser({
+    required String email,
+    bool setAsCurrentUser = true,
+  }) async {
     try {
       final user = await getUser(email: email);
       return user;
@@ -32,7 +38,12 @@ class NotesService {
       final createdUser = createUser(email: email);
       return createdUser;
     } catch (e) {
-      rethrow;
+      if (e == CouldNotFindUser) {
+        final createdUser = createUser(email: email);
+        return createdUser;
+      } else {
+        rethrow;
+      }
     }
   }
 
@@ -67,7 +78,6 @@ class NotesService {
       throw CouldNotUpdateNote();
     } else {
       final updatedNote = await getNote(id: note.id);
-      // here we are removing the local note in our catche and replace it with new updated note
       _notes.removeWhere((note) => note.id == updatedNote.id);
       _notes.add(updatedNote);
       _notesStreamController.add(_notes);
@@ -78,9 +88,8 @@ class NotesService {
   Future<Iterable<DatabaseNote>> getAllNotes() async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    // this ensures to get all rows of sql table named noteTable
     final notes = await db.query(noteTable);
-// basically this function is saying to convert each row's cell of notes table into an object of database note
+
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
   }
 
@@ -89,7 +98,6 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     final notes = await db.query(
       noteTable,
-      // how many notes to be fetched from the whole row
       limit: 1,
       where: 'id = ?',
       whereArgs: [id],
@@ -137,9 +145,6 @@ class NotesService {
 
     // make sure owner exists in the database with the correct id
     final dbUser = await getUser(email: owner.email);
-
-    // here we wrote that if the existing user is not the current user then throw error
-    // as i can then easily create a new note in any account that i know is logged in to the app
     if (dbUser != owner) {
       throw CouldNotFindUser();
     }
@@ -196,21 +201,19 @@ class NotesService {
       throw UserAlreadyExists();
     }
 
-    final userid = await db.insert(userTable, {
+    final userId = await db.insert(userTable, {
       emailColumn: email.toLowerCase(),
     });
 
     return DatabaseUser(
-      id: userid,
+      id: userId,
       email: email,
     );
   }
 
   Future<void> deleteUser({required String email}) async {
     await _ensureDbIsOpen();
-    // we take the netire database entries from the databse
     final db = _getDatabaseOrThrow();
-    // inbuild fucntion to delete an entry from the database
     final deletedCount = await db.delete(
       userTable,
       where: 'email = ?',
@@ -221,7 +224,6 @@ class NotesService {
     }
   }
 
-// created a database to get the data from the database to our function
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
@@ -231,7 +233,6 @@ class NotesService {
     }
   }
 
-// created a finction to close a database
   Future<void> close() async {
     final db = _db;
     if (db == null) {
@@ -250,22 +251,19 @@ class NotesService {
     }
   }
 
-// we need to make a function to open a database
   Future<void> open() async {
     if (_db != null) {
       throw DatabaseAlreadyOpenException();
     }
-
     try {
-      // getApplicationDocumentsDirectory function returns the path to our notes
       final docsPath = await getApplicationDocumentsDirectory();
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
-
+      // create the user table
       await db.execute(createUserTable);
-
-      await db.execute(createNotesTable);
+      // create note table
+      await db.execute(createNoteTable);
       await _cacheNotes();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
@@ -277,21 +275,18 @@ class NotesService {
 class DatabaseUser {
   final int id;
   final String email;
-  // constructor
   const DatabaseUser({
     required this.id,
     required this.email,
   });
-  // here we created the row of our database
+
   DatabaseUser.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
         email = map[emailColumn] as String;
 
   @override
-  // if we do not write tostring our debug console will just print "instance of database" and not the actual data
   String toString() => 'Person, ID = $id, email = $email';
 
-  // if there are two similar people in our database like X and Y -> just return Y.
   @override
   bool operator ==(covariant DatabaseUser other) => id == other.id;
 
@@ -312,12 +307,10 @@ class DatabaseNote {
     required this.isSyncedWithCloud,
   });
 
-  // creating our row from the database from notes table
   DatabaseNote.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
         userId = map[userIdColumn] as int,
         text = map[textColumn] as String,
-        // if isSyncedWithCloudColumn is == 1 return true or else return false
         isSyncedWithCloud =
             (map[isSyncedWithCloudColumn] as int) == 1 ? true : false;
 
@@ -333,26 +326,23 @@ class DatabaseNote {
 }
 
 const dbName = 'notes.db';
-const noteTable = 'table';
+const noteTable = 'note';
 const userTable = 'user';
 const idColumn = 'id';
 const emailColumn = 'email';
 const userIdColumn = 'user_id';
 const textColumn = 'text';
 const isSyncedWithCloudColumn = 'is_synced_with_cloud';
-const createNotesTable = '''
-          CREATE TABLE IF NOT EXISTS"notes" (
-	        "id"	INTEGER NOT NULL,
-	        "user_id"	INTEGER NOT NULL,
-	        "text"	TEXT,
-	        "is_synced_with_firebase"	INTEGER NOT NULL DEFAULT 0,
-	        FOREIGN KEY("user_id") REFERENCES "user"("ID")
-          );
-        ''';
-const createUserTable = '''
-       CREATE TABLE IF NOT EXISTS "user" (
-	      "ID"	INTEGER NOT NULL,
-	      "email"	TEXT NOT NULL UNIQUE,
-	      PRIMARY KEY("ID" AUTOINCREMENT)
-        );
-       ''';
+const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
+        "id"	INTEGER NOT NULL,
+        "email"	TEXT NOT NULL UNIQUE,
+        PRIMARY KEY("id" AUTOINCREMENT)
+      );''';
+const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
+        "id"	INTEGER NOT NULL,
+        "user_id"	INTEGER NOT NULL,
+        "text"	TEXT,
+        "is_synced_with_cloud"	INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY("user_id") REFERENCES "user"("id"),
+        PRIMARY KEY("id" AUTOINCREMENT)
+      );''';
