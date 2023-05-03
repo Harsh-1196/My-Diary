@@ -1,10 +1,11 @@
 // lec 32 -> 12:49
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mydiary/services/auth/auth_service.dart';
 import 'package:mydiary/services/crud/notes_service.dart';
 import '../../constants/routes.dart';
 import '../../enums/menu_action.dart';
+import '../../utilities/dialogs/logout_dialog.dart';
+import 'notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -46,7 +47,7 @@ class _NotesViewState extends State<NotesView> {
               switch (value) {
                 // now when the user selects the "logout" button then return show logout dialog
                 case MenuAction.logout:
-                  final showLogout = await showLogoutDialog(context);
+                  final showLogout = await logoutDialog(context);
                   if (showLogout) {
                     await AuthService.firebase().logOut();
                     if (!mounted) return;
@@ -83,18 +84,10 @@ class _NotesViewState extends State<NotesView> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return ListTile(
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
+                        return NotesListView(
+                          notes: allNotes,
+                          onDelete: (note) async {
+                            await _notesService.deleteNote(id: note.id);
                           },
                         );
                       } else {
@@ -112,35 +105,4 @@ class _NotesViewState extends State<NotesView> {
       ),
     );
   }
-}
-
-// logout popup menu
-Future<bool> showLogoutDialog(BuildContext context) {
-  // here showdialog can only return optional bool as the user can tap outside the box and then dialog cannot return its value
-  // since user can tap outide thats why show dialog return optional bool and not compulsorily bool
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to Log Out?'),
-        // actions are list of buttons which we would see after the heading text
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Log Out'))
-        ],
-      );
-    },
-    // since user can tap outide the box to cancel therefore we wrote here that either you can return us a value
-    // or you can also return false anytime the value has not passed
-  ).then((value) => value ?? false);
 }

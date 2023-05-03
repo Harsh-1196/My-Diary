@@ -8,7 +8,6 @@ import 'package:path/path.dart' show join;
 
 class NotesService {
   Database? _db;
-
   List<DatabaseNote> _notes = [];
 
   DatabaseUser? _user;
