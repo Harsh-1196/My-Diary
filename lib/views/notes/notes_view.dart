@@ -34,7 +34,7 @@ class _NotesViewState extends State<NotesView> {
           IconButton(
             onPressed: () {
               // here we used pushNamed and not pudhNamedAndRemoveUntill as we need to display this new note on top of our home screen and not by removing it
-              Navigator.of(context).pushNamed(newNoteRoute);
+              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
             },
             icon: const Icon(Icons.add),
           ),
@@ -75,6 +75,7 @@ class _NotesViewState extends State<NotesView> {
         future: _notesService.getOrCreateUser(email: userEmail),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
+            // if user exists return the streams of all notes from our database
             case ConnectionState.done:
               return StreamBuilder(
                 stream: _notesService.allNotes,
@@ -88,6 +89,12 @@ class _NotesViewState extends State<NotesView> {
                           notes: allNotes,
                           onDelete: (note) async {
                             await _notesService.deleteNote(id: note.id);
+                          },
+                          onTap: (note) {
+                            Navigator.of(context).pushNamed(
+                              createOrUpdateNoteRoute,
+                              arguments: note,
+                            );
                           },
                         );
                       } else {

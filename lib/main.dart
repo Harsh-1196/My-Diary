@@ -3,7 +3,7 @@ import 'package:mydiary/constants/routes.dart';
 import 'package:mydiary/services/auth/auth_service.dart';
 import 'package:mydiary/views/Verify_email_view.dart';
 import 'package:mydiary/views/login_view.dart';
-import 'package:mydiary/views/notes/new_notes_view.dart';
+import 'package:mydiary/views/notes/create_update_notes_view.dart';
 import 'package:mydiary/views/notes/notes_view.dart';
 import 'views/Register_View.dart';
 
@@ -20,7 +20,7 @@ void main() {
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
-        newNoteRoute: (context) => const NewNotesView(),
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
     ),
   );
